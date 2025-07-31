@@ -2,42 +2,34 @@
 Splits a fasta file, using information from a supplementary table 
 
 ```
-usage: splitFasta.py [-h] [-n NAME] [-i INFO] [-o OUTPUT]
-                     fasta_file info_file split_string
+usage: splitFasta.py [-o OUTPUT] [-f] [-x] [-v] fasta_file split_text
 
 positional arguments:
-  fasta_file            Fasta file containing reads to be split
-  info_file             File in csv or tsv format which contains parameters
-                        for filtering/ splitting
-  split_string          String to filter or split reads by. Should appear in a
-                        column of info_file
+  fasta_file            Fasta file to be read in
+  split_text		Text file containing entries to keep/ discard
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n NAME, --name NAME  Column of info_file which contains names of reads in
-                        fasta_file. Default is 1
-  -i INFO, --info INFO  Colum of info_file which conatins splitting
-                        informaton. Default is 2
   -o OUTPUT, --output OUTPUT
-                        Name of output file
+                        Output file to write to
+  -f, --fasta           Use if comparing two fasta files (i.e. split_text is also a fasta)
+  -x, --exclude         Exclude entries from split_text
+  -v, --verbose         Set verbose
   ```
   
 ## Usage 
-Takes a fasta file (**fasta_file**), and takes reads and writes to a new fasta file based on a second table (**info_file**) which contains at least some of the reads from **fasta_file**, and has an additional column with extra information. An additional string (**split_string**) is supplied, which is used to filter out the reads from **fasta_file** to write to a new file. 
-
-The main use for this was to split reads from a metagenomic fasta file, which contained a mixture of bacterial and fungal reads, into bacteria-specific and fungal-specific files. The info file was created by blasting the fasta file against a database of bacterial and fungal 16S/18S rRNA sequences, which resulted in a table of reads with a second column containing information describing the best match (*i.e.* bacterial or fungal origin). The program then takes the fasta file, info file, and a string to split by (for example, '*Bacteria*' or '*Fungi*'), and splits the fasta file accordingly. 
+Takes a fasta file (**fasta_file**), and takes a list of gene/ protein names/ identifiers (**split_text**) which contains at least some of the reads from **fasta_file**, and writes a new file (which can be specified by **OUTPUT**) which contains only the fasta sequences matching the names in **split_text**. 
 
 ## Optional flags
 
-1. *-n --name* 
+1. *-o --output* 
 
-   This flag takes an integer, which directs the column in **info_file** which contains the read IDs that appear in **fasta_file**. This expects the lowest value to be 1, not 0. The default value is 1. 
+   Allows the output file names to be specified. If this is not given, the output file will be **fasta_file_split.fasta**. 
 
+2. *-f --fasta*
 
-2. *-i --info*
+   This is used if two fasta files are being compared. This essentially tells the script that **split_text** should also be read in as a fasta file. 
 
-   This flag takes an integer, which directs the column in **info_file** which contains the information in which **split_string** will be searched against. This expects a lowest value of 1, not 0. The default value is 2. 
+3. *-x --exclude* 
 
-3. *-o --output* 
-
-   Allows the output file to be named. The format will be a fasta file, so should probably end in .fasta. If no output name is supplied, then the file will be named `[fasta_file]_[split_string].fasta`. 
+   Sets the script to exclude the entries provided in **split_text**, rather than keep them. 
